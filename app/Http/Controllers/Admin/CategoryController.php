@@ -47,8 +47,7 @@ class CategoryController extends Controller
     {
         $params = $request->except('_token');
         $params['slug'] = Str::slug($params['name']);
-        $params['parent_id'] = 0;
-        // $params['parent_id'] = (int)$params['parent_id'];
+        $params['parent_id'] = (int)$params['parent_id'];
 
         if (Category::create($params)) {
             Session::flash('success', 'Category has been saved');
@@ -94,7 +93,7 @@ class CategoryController extends Controller
     {
         $params = $request->except('_token');
         $params['slug'] = Str::slug($params('name'));
-        // $params['parent_id'] = (int)$params['parent_id'];
+        $params['parent_id'] = (int)$params['parent_id'];
 
         $category = Category::findOrFail($id);
         if ($category->update($params)) {
