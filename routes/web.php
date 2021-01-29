@@ -20,10 +20,12 @@ Route::get('/', function () {
 });
 
 Route::prefix('admin')
-    // ->namespace('Admin')
-    // ->middleware(['auth'])
+    ->middleware(['auth'])
     ->group(function () {
         Route::get('dashboard', [DashboardController::class, 'index']);
-        // Route::get('categories', [CategoryController::class, 'index']);
         Route::resource('categories', CategoryController::class);
     });
+
+Auth::routes();
+
+Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name('home');
