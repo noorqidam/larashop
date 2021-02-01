@@ -12,4 +12,20 @@ class Controller extends BaseController
     use AuthorizesRequests, DispatchesJobs, ValidatesRequests;
 
     protected $data = [];
+
+    public function __construct()
+    {
+        $this->_initAdminMenu();
+    }
+
+    /**
+     * Initiate admin menu
+     *
+     * @return void
+     */
+    private function _initAdminMenu()
+    {
+        $this->data['currentAdminMenu'] = 'dashboard';
+        $this->data['currentAdminSubMenu'] = '';
+    }
 }

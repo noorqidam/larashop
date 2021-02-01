@@ -15,9 +15,9 @@ class UsersTableSeeder extends Seeder
     public function run()
     {
         $adminUser = [
-            'name' => 'Noor Qidam',
-            'email' => 'noorqidam@gmail.com',
-            'password' => bcrypt('Aguero20')
+            'name' => 'Admin',
+            'email' => 'admin@example.com',
+            'password' => bcrypt('admin'),
         ];
 
         if (!User::where('email', $adminUser['email'])->exists()) {
