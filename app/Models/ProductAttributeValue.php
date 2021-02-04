@@ -23,12 +23,12 @@ class ProductAttributeValue extends Model
 
     public function product()
     {
-        return $this->belongsTo(Product::class);
+        return $this->belongsTo('App\Models\Product');
     }
 
     public function attribute()
     {
-        return $this->belongsTo(Attribute::class);
+        return $this->belongsTo('App\Models\Attribute');
     }
 
     public static function getAttributeOptions($product, $attributeCode)
@@ -39,6 +39,7 @@ class ProductAttributeValue extends Model
         $attributeOptions = ProductAttributeValue::where('attribute_id', $attribute->id)
             ->whereIn('product_id', $productVariantIDs)
             ->get();
+
         return $attributeOptions;
     }
 }
