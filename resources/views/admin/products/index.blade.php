@@ -30,7 +30,7 @@
                                         <td>{{ number_format($product->price) }}</td>
                                         <td>{{ $product->statusLabel() }}</td>
                                         <td>
-                                            <a href="{{ route('product.edit', $product->id) }}" class="btn btn-warning btn-sm">edit</a>
+                                            <a href="{{ url('admin/products/'. $product->id .'/edit') }}" class="btn btn-warning btn-sm">edit</a>
 
                                             @can('delete_products')
                                                 {!! Form::open(['url' => 'admin/products/'. $product->id, 'class' => 'delete', 'style' => 'display:inline-block']) !!}
@@ -42,7 +42,7 @@
                                     </tr>
                                 @empty
                                     <tr>
-                                        <td colspan="7" class="text-center">No records found</td>
+                                        <td colspan="7">No records found</td>
                                     </tr>
                                 @endforelse
                             </tbody>
@@ -51,7 +51,7 @@
                     </div>
                     @can('add_products')
                         <div class="card-footer text-right">
-                            <a href="{{ route('products.create') }}" class="btn btn-primary">Add New</a>
+                            <a href="{{ url('admin/products/create') }}" class="btn btn-primary">Add New</a>
                         </div>
                     @endcan
                 </div>
