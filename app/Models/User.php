@@ -19,9 +19,7 @@ class User extends Authenticatable
      * @var array
      */
     protected $fillable = [
-        'name',
-        'email',
-        'password',
+        'first_name', 'last_name', 'email', 'phone', 'password', 'company', 'address1', 'address2', 'province_id', 'city_id', 'postcode',
     ];
 
     /**
@@ -30,8 +28,7 @@ class User extends Authenticatable
      * @var array
      */
     protected $hidden = [
-        'password',
-        'remember_token',
+        'password', 'remember_token',
     ];
 
     /**
@@ -43,8 +40,23 @@ class User extends Authenticatable
         'email_verified_at' => 'datetime',
     ];
 
+    /**
+     * Define relationship with the Product
+     *
+     * @return void
+     */
     public function products()
     {
-        return $this->hasMany(Product::class);
+        return $this->hasMany('App\Models\Product');
+    }
+
+    /**
+     * Define relationship with the Favorite
+     *
+     * @return void
+     */
+    public function favorites()
+    {
+        return $this->hasMany('App\Models\Favorite');
     }
 }

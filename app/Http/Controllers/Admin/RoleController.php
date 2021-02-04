@@ -7,9 +7,7 @@ use App\Http\Controllers\Controller;
 use App\Models\Role;
 use App\Authorizable;
 use App\Models\Permission;
-use App\Models\User;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Session;
 
 class RoleController extends Controller
@@ -58,7 +56,7 @@ class RoleController extends Controller
         $this->validate($request, ['name' => 'required|unique:roles']);
 
         if (Role::create($request->only('name'))) {
-            Session::flash('successs', 'New role added.');
+            Session::flash('success', 'New role added.');
         }
 
         return redirect('admin/roles');
