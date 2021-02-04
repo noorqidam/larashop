@@ -8,7 +8,6 @@ use App\Http\Requests\AttributeRequest;
 use App\Authorizable;
 use App\Models\Attribute;
 use App\Models\AttributeOption;
-use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Session;
 
 class AttributeController extends Controller

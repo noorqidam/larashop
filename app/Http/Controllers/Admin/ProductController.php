@@ -9,7 +9,6 @@ use App\Http\Requests\ProductRequest;
 use App\Models\Attribute;
 use App\Models\AttributeOption;
 use App\Models\Category;
-use Illuminate\Http\Request;
 use App\Models\Product;
 use App\Models\ProductAttributeValue;
 use App\Models\ProductImage;
@@ -19,12 +18,20 @@ use App\Authorizable;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Session;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
+
+use Intervention\Image\ImageManagerStatic as Image;
 
 class ProductController extends Controller
 {
     use Authorizable;
 
+    /**
+     * Create a new controller instance.
+     *
+     * @return void
+     */
     public function __construct()
     {
         parent::__construct();
@@ -131,8 +138,8 @@ class ProductController extends Controller
     private function _generateProductVariants($product, $params)
     {
         $configurableAttributes = $this->_getConfigurableAttributes();
-        $variantAttributes = [];
 
+        $variantAttributes = [];
         foreach ($configurableAttributes as $attribute) {
             $variantAttributes[$attribute->code] = $params[$attribute->code];
         }
@@ -176,7 +183,7 @@ class ProductController extends Controller
             $attributeOption = AttributeOption::find($attributeOptionID);
 
             $attributeValueParams = [
-                'parent_id' => $parentProductID,
+                'parent_product_id' => $parentProductID,
                 'product_id' => $product->id,
                 'attribute_id' => $attributeOption->attribute_id,
                 'text_value' => $attributeOption->name,
@@ -218,18 +225,7 @@ class ProductController extends Controller
             Session::flash('error', 'Product could not be saved');
         }
 
-        return redirect('admin/products' . $product->id . '/edit/');
-    }
-
-    /**
-     * Display the specified resource.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
-    public function show($id)
-    {
-        //
+        return redirect('admin/products/' . $product->id . '/edit/');
     }
 
     /**
@@ -241,12 +237,13 @@ class ProductController extends Controller
     public function edit($id)
     {
         if (empty($id)) {
-            return redirect('admin.products.create');
+            return redirect('admin/products/create');
         }
 
         $product = Product::findOrFail($id);
         $product->qty = isset($product->productInventory) ? $product->productInventory->qty : null;
-        $categories = Category::orderBy('name', 'asc')->get();
+
+        $categories = Category::orderBy('name', 'ASC')->get();
 
         $this->data['categories'] = $categories->toArray();
         $this->data['product'] = $product;
@@ -306,16 +303,13 @@ class ProductController extends Controller
     {
         if ($params['variants']) {
             foreach ($params['variants'] as $productParams) {
-                $product = Product::find($productParams);
+                $product = Product::find($productParams['id']);
                 $product->update($productParams);
 
                 $product->status = $params['status'];
                 $product->save();
 
-                ProductInventory::updateOrCreate(
-                    ['product_id' => $product->id],
-                    ['qty' => $productParams['qty']]
-                );
+                ProductInventory::updateOrCreate(['product_id' => $product->id], ['qty' => $productParams['qty']]);
             }
         }
     }
@@ -418,6 +412,58 @@ class ProductController extends Controller
 
             return redirect('admin/products/' . $id . '/images');
         }
+    }
+
+    /**
+     * Resize image
+     *
+     * @param file   $image    raw file
+     * @param string $fileName image file name
+     * @param string $folder   folder name
+     *
+     * @return Response
+     */
+    private function _resizeImage($image, $fileName, $folder)
+    {
+        $resizedImage = [];
+
+        $smallImageFilePath = $folder . '/small/' . $fileName;
+        $size = explode('x', ProductImage::SMALL);
+        list($width, $height) = $size;
+
+        $smallImageFile = Image::make($image)->fit($width, $height)->stream();
+        if (Storage::put('public/' . $smallImageFilePath, $smallImageFile)) {
+            $resizedImage['small'] = $smallImageFilePath;
+        }
+
+        $mediumImageFilePath = $folder . '/medium/' . $fileName;
+        $size = explode('x', ProductImage::MEDIUM);
+        list($width, $height) = $size;
+
+        $mediumImageFile = Image::make($image)->fit($width, $height)->stream();
+        if (Storage::put('public/' . $mediumImageFilePath, $mediumImageFile)) {
+            $resizedImage['medium'] = $mediumImageFilePath;
+        }
+
+        $largeImageFilePath = $folder . '/large/' . $fileName;
+        $size = explode('x', ProductImage::LARGE);
+        list($width, $height) = $size;
+
+        $largeImageFile = Image::make($image)->fit($width, $height)->stream();
+        if (Storage::put('public/' . $largeImageFilePath, $largeImageFile)) {
+            $resizedImage['large'] = $largeImageFilePath;
+        }
+
+        $extraLargeImageFilePath  = $folder . '/xlarge/' . $fileName;
+        $size = explode('x', ProductImage::EXTRA_LARGE);
+        list($width, $height) = $size;
+
+        $extraLargeImageFile = Image::make($image)->fit($width, $height)->stream();
+        if (Storage::put('public/' . $extraLargeImageFilePath, $extraLargeImageFile)) {
+            $resizedImage['extra_large'] = $extraLargeImageFilePath;
+        }
+
+        return $resizedImage;
     }
 
     /**
