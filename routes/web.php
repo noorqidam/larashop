@@ -3,9 +3,18 @@
 use App\Http\Controllers\Admin\AttributeController;
 use App\Http\Controllers\Admin\CategoryController;
 use App\Http\Controllers\Admin\DashboardController;
+use App\Http\Controllers\Admin\OrderController;
 use App\Http\Controllers\Admin\ProductController;
+use App\Http\Controllers\Admin\ReportController;
 use App\Http\Controllers\Admin\RoleController;
+use App\Http\Controllers\Admin\ShipmentController;
+use App\Http\Controllers\Admin\SlideController;
 use App\Http\Controllers\Admin\UserController;
+use App\Http\Controllers\CartController;
+use App\Http\Controllers\FavoriteController;
+use App\Http\Controllers\OrderController as OrderFrontEndController;
+use App\Http\Controllers\PaymentController;
+use App\Http\Controllers\ProfileController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -22,6 +31,34 @@ use Illuminate\Support\Facades\Route;
 Route::get('/', function () {
     return view('welcome');
 });
+
+Route::get('/products', [ProductController::class, 'index']);
+Route::get('/product/{slug}', [ProductController::class, 'show']);
+Route::get('/product/quick-view/{slug}', [ProductController::class, 'quickView']);
+
+Route::get('/carts', [CartController::class, 'index']);
+Route::delete('/carts/remove/{cartID}', [CartController::class, 'destroy']);
+Route::post('/carts', [CartController::class, 'store']);
+Route::post('/carts/update', [CartController::class, 'update']);
+
+Route::get('orders/checkout', [OrderFrontEndController::class, 'checkout']);
+Route::post('orders/checkout', [OrderFrontEndController::class, 'doCheckout']);
+Route::post('orders/shipping-cost', [OrderFrontEndController::class, 'shippingCost']);
+Route::post('orders/set-shipping', [OrderFrontEndController::class, 'setShipping']);
+Route::get('orders/received/{orderID}', [OrderFrontEndController::class, 'received']);
+Route::get('orders/cities', [OrderFrontEndController::class, 'cities']);
+Route::get('orders', [OrderFrontEndController::class, 'index']);
+Route::get('orders/{orderID}', [OrderFrontEndController::class, 'show']);
+
+Route::post('payments/notification', [PaymentController::class, 'notification']);
+Route::get('payments/completed', [PaymentController::class, 'completed']);
+Route::get('payments/failed', [PaymentController::class, 'failed']);
+Route::get('payments/unfinish', [PaymentController::class, 'unfinish']);
+
+Route::resource('favorite', FavoriteController::class);
+
+Route::get('profile', [ProfileController::class, 'index']);
+Route::post('profile', [ProfileController::class, 'update']);
 
 Route::prefix('admin')
     ->middleware(['auth'])
@@ -55,6 +92,24 @@ Route::prefix('admin')
 
         Route::resource('roles', RoleController::class);
         Route::resource('users', UserController::class);
+
+        Route::get('orders/trashed', [OrderController::class, 'trashed']);
+        Route::get('orders/restore/{orderID}', [OrderController::class, 'restore']);
+        Route::resource('orders', OrderController::class);
+        Route::get('orders/{orderID}/cancel', [OrderController::class, 'cancel']);
+        Route::put('orders/cancel/{orderID}', [OrderController::class, 'doCancel']);
+        Route::post('orders/complete/{orderID}', [OrderController::class], 'doComplete');
+
+        Route::resource('shipments', ShipmentController::class);
+
+        Route::resource('slides', SlideController::class);
+        Route::get('slides/{slideID}/up', [SlideController::class, 'moveUp']);
+        Route::get('slides/{slideID}/down', [SlideController::class, 'moveDown']);
+
+        Route::get('reports/revenue', [ReportController::class, 'revenue']);
+        Route::get('reports/product', [ReportController::class, 'product']);
+        Route::get('reports/inventory', [ReportController::class, 'inventory']);
+        Route::get('reports/payment', [ReportController::class, 'payment']);
     });
 
 Auth::routes();

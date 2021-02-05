@@ -2,7 +2,8 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\Http\Request;
+use App\Models\Product;
+use App\Models\Slide;
 
 class HomeController extends Controller
 {
@@ -13,7 +14,7 @@ class HomeController extends Controller
      */
     public function __construct()
     {
-        $this->middleware('auth');
+        parent::__construct();
     }
 
     /**
@@ -23,6 +24,12 @@ class HomeController extends Controller
      */
     public function index()
     {
-        return view('home');
+        $products = Product::popular()->get();
+        $this->data['products'] = $products;
+
+        $slides = Slide::active()->orderBy('position', 'asc')->get();
+        $this->data['slides'] = $slides;
+
+        return $this->loadTheme('home', $this->data);
     }
 }
