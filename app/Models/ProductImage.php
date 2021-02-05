@@ -22,8 +22,13 @@ class ProductImage extends Model
     public const LARGE = '600x656';
     public const EXTRA_LARGE = '1125x1200';
 
+    /**
+     * Relationship with the product
+     *
+     * @return array
+     */
     public function product()
     {
-        return $this->belongsTo(Product::class);
+        return $this->belongsTo('App\Models\Product');
     }
 }
