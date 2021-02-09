@@ -1,10 +1,10 @@
 @extends('themes.ezone.layout')
 
 @section('content')
-	<div class="breadcrumb-area pt-205 pb-210" style="background-image: url({{ asset('themes/ezone/assets/img/bg/breadcrumb.jpg') }})">
+	<div class="breadcrumb-area pt-50">
 		<div class="container">
-			<div class="breadcrumb-content text-center">
-				<h2>product details</h2>
+			<div class="breadcrumb-content">
+				<h2 class="text-center">product details</h2>
 				<ul>
 					<li><a href="/">home</a></li>
 					<li> product details </li>
@@ -12,7 +12,7 @@
 			</div>
 		</div>
 	</div>
-	<div class="product-details ptb-100 pb-90">
+	<div class="product-details pt-20 pb-10">
 		<div class="container">
 			<div class="row">
 				<div class="col-md-12 col-lg-7 col-12">
@@ -122,17 +122,20 @@
 								<li class="categories-title">Share :</li>
 								<li>
 									<a href="#">
-										<i class="icofont icofont-social-facebook"></i>
+                                        {{-- <i class="icofont icofont-social-facebook"></i> --}}
+                                        <i class="fab fa-facebook-f" aria-hidden="true"></i>
 									</a>
 								</li>
 								<li>
-									<a href="#">
-										<i class="icofont icofont-social-twitter"></i>
+                                    <a href="#">
+                                        {{-- <i class="icofont icofont-social-twitter"></i> --}}
+                                        <i class="fab fa-twitter"></i>
 									</a>
 								</li>
 								<li>
-									<a href="#">
-										<i class="icofont icofont-social-pinterest"></i>
+                                    <a href="#">
+                                        <i class="fab fa-instagram"></i>
+                                        {{-- <i class="icofont icofont-social-instagram"></i> --}}
 									</a>
 								</li>
 								<li>

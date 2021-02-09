@@ -6538,28 +6538,28 @@ a.icon-cart-furniture.food-cart span {
 
 /*------- 12. Breadcrumb style -------------*/
 .breadcrumb-content h2 {
-    color: #fff;
+    color: #000;
     font-size: 40px;
     font-weight: bold;
     margin-bottom: 16px;
     text-transform: capitalize;
 }
 .breadcrumb-content li {
-    color: #fff;
+    color: #000;
     display: inline-block;
     font-weight: 600;
     text-transform: uppercase;
 }
 .breadcrumb-content li a {
-    color: #fff;
+    color: #000;
     position: relative;
     padding-right: 18px;
 }
 .breadcrumb-content li a:hover {
-    color: #ccc;
+    color: #000;
 }
 .breadcrumb-content li a::after {
-    background-color: #fff;
+    background-color: #000;
     content: "";
     font-size: 8px;
     height: 1px;
@@ -7615,22 +7615,41 @@ h5.panel-title {
     display: inline-block;
     margin-right: 14px;
 }
+.product-share > ul li {
+    text-align: center;
+    text-decoration: none;
+}
 .product-share > ul li a {
     border: 1px solid #3f3f3f;
-    border-radius: 50px;
-    color: #585858;
-    display: inline-block;
-    height: 30px;
     text-align: center;
-    width: 30px;
-    line-height: 30px;
+    text-decoration: none;
+    width: 40px;
+    height: 40px;
+    display: inline-block;
+    border-radius: 50px;
+    line-height: 40px;
+}
+
+.product-share > ul li a:nth-child(2) {
+    color: #3b5998;
 }
 .product-details-cati-tag li a:hover {
     color: #050035;
 }
-.product-share > ul li a:hover {
-    background-color: #050035;
-    border: 1px solid #050035;
+.product-share > ul li:nth-child(2) :hover {
+    background-color: #4267b2;
+    color: #fff;
+}
+.product-share > ul li:nth-child(3) :hover {
+    background-color: #1da1f2;
+    color: #fff;
+}
+.product-share > ul li:nth-child(4) :hover {
+    background-color: #c32aa3;
+    color: #fff;
+}
+.product-share > ul li:nth-child(5) :hover {
+    background-color: #333;
     color: #fff;
 }
 .details-price {

@@ -182,6 +182,8 @@ return [
         Darryldecode\Cart\CartServiceProvider::class,
         Intervention\Image\ImageServiceProvider::class,
         Barryvdh\DomPDF\ServiceProvider::class,
+
+        App\Providers\AdminRepositoryServiceProvider::class,
     ],
 
     /*

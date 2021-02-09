@@ -5,6 +5,7 @@ use App\Http\Controllers\Admin\CategoryController;
 use App\Http\Controllers\Admin\DashboardController;
 use App\Http\Controllers\Admin\OrderController;
 use App\Http\Controllers\Admin\ProductController;
+use App\Http\Controllers\ProductController as ProductFrontEndController;
 use App\Http\Controllers\Admin\ReportController;
 use App\Http\Controllers\Admin\RoleController;
 use App\Http\Controllers\Admin\ShipmentController;
@@ -32,9 +33,9 @@ Route::get('/', function () {
     return view('welcome');
 });
 
-Route::get('/products', [ProductController::class, 'index']);
-Route::get('/product/{slug}', [ProductController::class, 'show']);
-Route::get('/product/quick-view/{slug}', [ProductController::class, 'quickView']);
+Route::get('/products', [ProductFrontEndController::class, 'index']);
+Route::get('/product/{slug}', [ProductFrontEndController::class, 'show']);
+Route::get('/products/quick-view/{slug}', [ProductFrontEndController::class, 'quickView']);
 
 Route::get('/carts', [CartController::class, 'index']);
 Route::delete('/carts/remove/{cartID}', [CartController::class, 'destroy']);
@@ -69,7 +70,7 @@ Route::prefix('admin')
         Route::resource('products', ProductController::class);
         Route::get('products/{productID}/images', [ProductController::class, 'images'])
             ->name('products.images');
-        Route::get('products/{productID}/add-images', [ProductController::class, 'addImage'])
+        Route::get('products/{productID}/add-image', [ProductController::class, 'addImage'])
             ->name('products.add_image');
         Route::post('products/images/{productID}', [ProductController::class, 'uploadImage'])
             ->name('products.upload_image');
@@ -77,11 +78,11 @@ Route::prefix('admin')
             ->name('products.remove_image');
 
         Route::resource('attributes', AttributeController::class);
-        Route::get('attributes/{attributeID/options}', [AttributeController::class, 'options'])
+        Route::get('attributes/{attributeID}/options', [AttributeController::class, 'options'])
             ->name('attributes.options');
         Route::get('attribute/{attributeID}/add-option', [AttributeController::class, 'add_option'])
             ->name('attributes.add_option');
-        Route::post('attribute/options/{attributeID}', [AttributeController::class, 'store_option'])
+        Route::post('attributes/options/{attributeID}', [AttributeController::class, 'store_option'])
             ->name('attributes.store_option');
         Route::delete('attributes/options/{optionID}', [AttributeController::class, 'remove_option'])
             ->name('attributes.remove_option');

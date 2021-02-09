@@ -158,6 +158,7 @@ class ProductController extends Controller
                     ->where('text_value', $attributeOption->name);
             });
         }
+        return $products;
     }
 
     /**
@@ -184,6 +185,7 @@ class ProductController extends Controller
 
             $this->data['selectedSort'] = url('products?sort=' . $sort);
         }
+        return $products;
     }
 
     /**
