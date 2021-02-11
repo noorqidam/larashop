@@ -4,11 +4,9 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\CategoryRequest;
-use App\Models\Category;
 use App\Authorizable;
 use App\Repositories\Admin\Interfaces\CategoryRepositoryInterface;
 use Illuminate\Support\Facades\Session;
-use Illuminate\Support\Str;
 
 class CategoryController extends Controller
 {
@@ -110,7 +108,6 @@ class CategoryController extends Controller
      */
     public function destroy($id)
     {
-
         if ($this->_categoryRepository->delete($id)) {
             Session::flash('success', 'Category has been deleted');
         }
