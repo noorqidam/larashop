@@ -201,15 +201,16 @@ class CategoryRepositoryTest extends TestCase
      *
      * @return void
      */
-    // public function testShouldThrowAnErrorWhenUpdateACategoryAndTheRequireFieldsAreNotFilled()
-    // {
-    //     // $this->expectException(UpdateCategoryErrorException::class);
+    public function testShouldThrowAnErrorWhenUpdateACategoryAndTheRequireFieldsAreNotFilled()
+    {
+        // $this->expectException(UpdateCategoryErrorException::class);
 
-    //     $category = Category::factory()->create();
-    //     $params = [];
-    //     $categoryRepository = new CategoryRepository(new Category);
-    //     $category = $categoryRepository->update($params, $category->id);
-    // }
+        // $category = Category::factory()->create();
+        // $params = [];
+
+        // $categoryRepository = new CategoryRepository(new Category);
+        // $category = $categoryRepository->update($params, $category->id);
+    }
 
     /**
      * Should throw an error when getting category by invalid id
