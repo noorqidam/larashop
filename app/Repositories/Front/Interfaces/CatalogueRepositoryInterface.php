@@ -10,7 +10,7 @@ interface CatalogueRepositoryInterface
 
     public function findBySKU($sku);
 
-    public function findProductById($productID);
+    public function findProductByID($productID);
 
     public function getAttributeOptions($product, $attributeName);
 

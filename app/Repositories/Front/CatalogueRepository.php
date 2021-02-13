@@ -33,7 +33,7 @@ class CatalogueRepository implements CatalogueRepositoryInterface
         return Product::active()->where('sku', $sku)->firstOrFail();
     }
 
-    public function findProductById($productID)
+    public function findProductByID($productID)
     {
         return Product::findOrFail($productID);
     }
