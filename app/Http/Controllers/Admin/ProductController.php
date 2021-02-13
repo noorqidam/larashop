@@ -84,7 +84,7 @@ class ProductController extends Controller
         $params['user_id'] = Auth::user()->id;
 
         if ($product = $this->productRepository->create($params)) {
-            Session::flash('success', 'Product has been saved');
+            Session::flash('success', 'Product has been saved.');
             return redirect('admin/products/' . $product->id . '/edit/');
         } else {
             Session::flash('error', 'Product could not be saved');
@@ -126,7 +126,7 @@ class ProductController extends Controller
         $params = $request->except('_token');
 
         if ($this->productRepository->update($params, $id)) {
-            Session::flash('success', 'Product has been saved');
+            Session::flash('success', 'Product has been saved.');
         } else {
             Session::flash('error', 'Product could not be saved');
         }
