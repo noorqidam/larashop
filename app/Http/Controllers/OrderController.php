@@ -140,7 +140,7 @@ class OrderController extends Controller
             $status = 200;
             $message = 'Success set shipping cost';
 
-            $this->_addShippingCostToCart($selectedShipping['service'], $selectedShipping['cost']);
+            $this->cartRepositories->addShippingCostToCart($selectedShipping['service'], $selectedShipping['cost']);
 
             $data['total'] = number_format($this->cartRepository->getTotal());
         } else {

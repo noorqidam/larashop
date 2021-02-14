@@ -277,7 +277,7 @@ class OrderRepository implements OrderRepositoryInterface
      *
      * @return void
      */
-    protected function initPaymentGateway()
+    private function initPaymentGateway()
     {
         // Set your Merchant Server Key
         \Midtrans\Config::$serverKey = env('MIDTRANS_SERVER_KEY');
