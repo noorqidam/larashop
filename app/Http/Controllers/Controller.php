@@ -7,6 +7,7 @@ use Illuminate\Foundation\Bus\DispatchesJobs;
 use Illuminate\Foundation\Validation\ValidatesRequests;
 use Illuminate\Routing\Controller as BaseController;
 use Illuminate\Support\Facades\Storage;
+use App\Repositories\Front\CartRepository;
 
 class Controller extends BaseController
 {
@@ -15,16 +16,9 @@ class Controller extends BaseController
     protected $data = [];
     protected $uploadsFolder = 'uploads/';
 
-    protected $rajaOngkirApiKey = null;
-    protected $rajaOngkirBaseUrl = null;
-    protected $rajaOngkirOrigin = null;
-    protected $couriers = [
-        'jne' => 'JNE',
-        'pos' => 'POS Indonesia',
-        'tiki' => 'Titipan Kilat'
-    ];
-
     protected $provinces = [];
+
+    private $cartRepository = [];
 
     /**
      * Create a new controller instance.
@@ -33,11 +27,8 @@ class Controller extends BaseController
      */
     public function __construct()
     {
-        $this->rajaOngkirApiKey = env('RAJAONGKIR_API_KEY');
-        $this->rajaOngkirBaseUrl = env('RAJAONGKIR_BASE_URL');
-        $this->rajaOngkirOrigin = env('RAJAONGKIR_ORIGIN');
-
         $this->_initAdminMenu();
+        $this->cartRepository = new CartRepository;
     }
 
     /**
