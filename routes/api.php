@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\API\ProductController;
 use App\Http\Controllers\API\UserController;
+use App\Http\Controllers\CartController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -24,10 +25,13 @@ Route::middleware('client')->group(function () {
     Route::get('products/{sku}', [ProductController::class, 'show']);
 });
 
-Route::middleware(['auth:api'])->group(function () {
+Route::middleware(['auth:api', 'sessions'])->group(function () {
     Route::get('profile', [UserController::class, 'profile']);
     Route::get('logout', [UserController::class, 'logout']);
 });
+
+Route::get('carts', [CartController::class, 'index']);
+Route::post('carts', [CartController::class, 'store']);
 
 Route::middleware('auth:api')->get('/user', function (Request $request) {
     return $request->user();
