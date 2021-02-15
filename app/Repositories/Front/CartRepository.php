@@ -53,7 +53,7 @@ class CartRepository implements CartRepositoryInterface
         return !(empty($items[$cartID])) ? $items[$cartID] : null;
     }
 
-    public function updateCart($cartID, $qty, $sessionKey)
+    public function updateCart($cartID, $qty, $sessionKey = null)
     {
         $params = [
             'quantity' => [

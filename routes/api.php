@@ -28,10 +28,13 @@ Route::middleware('client')->group(function () {
 Route::middleware(['auth:api', 'sessions'])->group(function () {
     Route::get('profile', [UserController::class, 'profile']);
     Route::get('logout', [UserController::class, 'logout']);
+    Route::get('carts', [CartController::class, 'index']);
+    Route::post('carts', [CartController::class, 'store']);
+    Route::put('carts/{cart_id}', [CartController::class, 'update']);
+    Route::delete('carts/{cart_id}', [CartController::class, 'destroy']);
+    Route::delete('carts', [CartController::class, 'clear']);
 });
 
-Route::get('carts', [CartController::class, 'index']);
-Route::post('carts', [CartController::class, 'store']);
 
 Route::middleware('auth:api')->get('/user', function (Request $request) {
     return $request->user();

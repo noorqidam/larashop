@@ -12,7 +12,7 @@ interface CartRepositoryInterface
 
     public function getCartItem($cartID, $sessionKey = null);
 
-    public function updateCart($cartID, $qty, $sessionKey);
+    public function updateCart($cartID, $qty, $sessionKey = null);
 
     public function removeItem($cartID, $sessionKey = null);
 
