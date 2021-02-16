@@ -121,7 +121,7 @@ class OrderController extends Controller
         $shippingService = $request->get('shipping_service');
         $destination = $request->get('city_id');
 
-        $shippingOptions = $this->getShippingCost($destination, $this->_getTotalWeight());
+        $shippingOptions = $this->getShippingCost($destination, $this->getTotalWeight());
 
         $selectedShipping = null;
         if ($shippingOptions['results']) {

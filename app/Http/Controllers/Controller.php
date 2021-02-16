@@ -56,37 +56,6 @@ class Controller extends BaseController
     }
 
     /**
-     * Raja Ongkir Request (Shipping Cost Calculation)
-     *
-     * @param string $resource resource url
-     * @param array  $params   parameters
-     * @param string $method   request method
-     *
-     * @return json
-     */
-    protected function rajaOngkirRequest($resource, $params = [], $method = 'GET')
-    {
-        $client = new \GuzzleHttp\Client();
-
-        $headers = ['key' => $this->rajaOngkirApiKey];
-        $requestParams = [
-            'headers' => $headers,
-        ];
-
-        $url = $this->rajaOngkirBaseUrl . $resource;
-        if ($params && $method == 'POST') {
-            $requestParams['form_params'] = $params;
-        } else if ($params && $method == 'GET') {
-            $query = is_array($params) ? '?' . http_build_query($params) : '';
-            $url = $this->rajaOngkirBaseUrl . $resource . $query;
-        }
-
-        $response = $client->request($method, $url, $requestParams);
-
-        return json_decode($response->getBody(), true);
-    }
-
-    /**
      * Get provinces
      *
      * @return array
@@ -99,7 +68,7 @@ class Controller extends BaseController
         $isExistProvinceJson = Storage::disk('local')->exists($provinceFilePath);
 
         if (!$isExistProvinceJson) {
-            $response = $this->rajaOngkirRequest('province');
+            $response = $this->cartRepository->rajaOngkirRequest('province');
             Storage::disk('local')->put($provinceFilePath, serialize($response['rajaongkir']['results']));
         }
 
@@ -130,7 +99,7 @@ class Controller extends BaseController
         $isExistCitiesJson = Storage::disk('local')->exists($cityFilePath);
 
         if (!$isExistCitiesJson) {
-            $response = $this->rajaOngkirRequest('city', ['province' => $provinceId]);
+            $response = $this->cartRepository->rajaOngkirRequest('city', ['province' => $provinceId]);
             Storage::disk('local')->put($cityFilePath, serialize($response['rajaongkir']['results']));
         }
 
@@ -144,22 +113,5 @@ class Controller extends BaseController
         }
 
         return $cities;
-    }
-
-    /**
-     * Initiate payment gateway request object
-     *
-     * @return void
-     */
-    protected function initPaymentGateway()
-    {
-        // Set your Merchant Server Key
-        \Midtrans\Config::$serverKey = env('MIDTRANS_SERVER_KEY');
-        // Set to Development/Sandbox Environment (default). Set to true for Production Environment (accept real transaction).
-        \Midtrans\Config::$isProduction = false;
-        // Set sanitization on (default)
-        \Midtrans\Config::$isSanitized = true;
-        // Set 3DS transaction for credit card to true
-        \Midtrans\Config::$is3ds = true;
     }
 }

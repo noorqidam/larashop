@@ -106,7 +106,7 @@ class CartRepository implements CartRepositoryInterface
             [
                 'name' => 'TAX 10%',
                 'type' => 'tax',
-                'target' => 'total',
+                'target' => 'subtotal',
                 'value' => '10%',
             ]
         );

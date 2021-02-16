@@ -33,6 +33,9 @@ Route::middleware(['auth:api', 'sessions'])->group(function () {
     Route::put('carts/{cart_id}', [CartController::class, 'update']);
     Route::delete('carts/{cart_id}', [CartController::class, 'destroy']);
     Route::delete('carts', [CartController::class, 'clear']);
+    Route::get('carts/shipping-options', [CartController::class, 'shippingOptions']);
+    Route::post('carts/set-shipping', [CartController::class, 'setShipping']);
+    Route::post('orders/checkout', [CartController::class, 'doCheckout']);
 });
 
 
