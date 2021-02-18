@@ -2,11 +2,12 @@
 
 namespace App\Repositories\Front;
 
-use App\Models\AttributeOption;
-use App\Models\Category;
 use App\Models\Product;
+use App\Models\Category;
+use App\Models\AttributeOption;
 use App\Models\ProductAttributeValue;
-use Illuminate\Support\Str;
+
+use Str;
 
 use App\Repositories\Front\Interfaces\CatalogueRepositoryInterface;
 
@@ -15,6 +16,7 @@ class CatalogueRepository implements CatalogueRepositoryInterface
     public function paginate($perPage, $request)
     {
         $products = Product::active();
+
         $products = $this->searchProducts($products, $request);
         $products = $this->filterProductsByPriceRange($products, $request);
         $products = $this->filterProductsByAttribute($products, $request);
@@ -25,7 +27,7 @@ class CatalogueRepository implements CatalogueRepositoryInterface
 
     public function findBySlug($slug)
     {
-        Product::active()->where('slug', $slug)->firstOrFail();
+        return Product::active()->where('slug', $slug)->firstOrFail();
     }
 
     public function findBySKU($sku)
@@ -46,8 +48,8 @@ class CatalogueRepository implements CatalogueRepositoryInterface
     public function getParentCategories()
     {
         return Category::parentCategories()
-            ->orderBy('name', 'asc')
-            ->get();
+        ->orderBy('name', 'asc')
+        ->get();
     }
 
     public function getAttributeFilters($attributeCode)
@@ -55,11 +57,11 @@ class CatalogueRepository implements CatalogueRepositoryInterface
         return AttributeOption::whereHas(
             'attribute',
             function ($query) use ($attributeCode) {
-                $query->where('code', $attributeCode)
-                    ->where('is_filterable', 1);
+                    $query->where('code', $attributeCode)
+                        ->where('is_filterable', 1);
             }
         )
-            ->orderBy('name', 'asc')->get();
+        ->orderBy('name', 'asc')->get();
     }
 
     public function getMinPrice()
@@ -72,19 +74,19 @@ class CatalogueRepository implements CatalogueRepositoryInterface
         return Product::max('price');
     }
 
-    public function getProductbyAtrributes($product, $params)
+    public function getProductByAttributes($product, $params)
     {
         return Product::from('products as p')
-            ->whereRaw(
-                "p.parent_id = :parent_product_id
-        and (select pav.text_value
+        ->whereRaw(
+            "p.parent_id = :parent_product_id
+        and (select pav.text_value 
                 from product_attribute_values pav
                 join attributes a on a.id = pav.attribute_id
                 where a.code = :size_code
                 and pav.product_id = p.id
                 limit 1
             ) = :size_value
-        and (select pav.text_value
+        and (select pav.text_value 
                 from product_attribute_values pav
                 join attributes a on a.id = pav.attribute_id
                 where a.code = :color_code
@@ -92,14 +94,14 @@ class CatalogueRepository implements CatalogueRepositoryInterface
                 limit 1
             ) = :color_value
             ",
-                [
-                    'parent_product_id' => $product->id,
-                    'size_code' => 'size',
-                    'size_value' => $params['size'],
-                    'color_code' => 'color',
-                    'color_value' => $params['color'],
-                ]
-            )->firstOrFail();
+            [
+                'parent_product_id' => $product->id,
+                'size_code' => 'size',
+                'size_value' => $params['size'],
+                'color_code' => 'color',
+                'color_value' => $params['color'],
+            ]
+        )->firstOrFail();
     }
 
     public function checkProductInventory($product, $qtyRequested)
@@ -120,7 +122,7 @@ class CatalogueRepository implements CatalogueRepositoryInterface
     private function checkInventory($product, $itemQuantity)
     {
         if ($product->productInventory->qty < $itemQuantity) {
-            throw new \App\Exceptions\OutOfStockException('The product ' . $product->sku . 'is out of stock.');
+            throw new \App\Exceptions\OutOfStockException('The product '. $product->sku .' is out of stock');
         }
     }
 
@@ -136,9 +138,8 @@ class CatalogueRepository implements CatalogueRepositoryInterface
     {
         if ($q = $request->query('q')) {
             $q = str_replace('-', ' ', Str::slug($q));
-
-            // $products = $products->whereRaw('MATCH(name,slug,short_description,description) AGAINS (? IN NATURAL LANGUAGE MODE)', [$q]);
-            $products = Product::whereRaw('MATCH(name,slug,short_description,description) AGAINS (? IN NATURAL LANGUAGE MODE)', [$q]);
+            
+            $products = $products->whereRaw('MATCH(name, slug, short_description, description) AGAINST (? IN NATURAL LANGUAGE MODE)', [$q]);
 
             $this->data['q'] = $q;
         }
@@ -156,6 +157,7 @@ class CatalogueRepository implements CatalogueRepositoryInterface
                 }
             );
         }
+
         return $products;
     }
 
@@ -179,8 +181,7 @@ class CatalogueRepository implements CatalogueRepositoryInterface
             $highPrice = !empty($prices[1]) ? (float)$prices[1] : $this->data['maxPrice'];
 
             if ($lowPrice && $highPrice) {
-                // $products = $products->where('price', '>=', $lowPrice)
-                $products = Product::where('price', '>=', $lowPrice)
+                $products = $products->where('price', '>=', $lowPrice)
                     ->where('price', '<=', $highPrice)
                     ->orWhereHas(
                         'variants',
@@ -189,10 +190,12 @@ class CatalogueRepository implements CatalogueRepositoryInterface
                                 ->where('price', '<=', $highPrice);
                         }
                     );
+
                 $this->data['minPrice'] = $lowPrice;
                 $this->data['maxPrice'] = $highPrice;
             }
         }
+
         return $products;
     }
 
@@ -209,12 +212,15 @@ class CatalogueRepository implements CatalogueRepositoryInterface
         if ($attributeOptionID = $request->query('option')) {
             $attributeOption = AttributeOption::findOrFail($attributeOptionID);
 
-            // $products = $products->whereHas('ProductAttributeValues', function ($query) use ($attributeOption) {
-            $products = ProductAttributeValue::whereHas('ProductAttributeValues', function ($query) use ($attributeOption) {
-                $query->where('attribute_id', $attributeOption->attribute_id)
-                    ->where('text_value', $attributeOption->name);
-            });
+            $products = $products->whereHas(
+                'ProductAttributeValues',
+                function ($query) use ($attributeOption) {
+                    $query->where('attribute_id', $attributeOption->attribute_id)
+                        ->where('text_value', $attributeOption->name);
+                }
+            );
         }
+
         return $products;
     }
 
@@ -237,11 +243,12 @@ class CatalogueRepository implements CatalogueRepositoryInterface
             $orderBy = strtolower($sortAndOrder[1]);
 
             if (in_array($sortBy, $availableSorts) && in_array($orderBy, $availableOrder)) {
-                $products = Product::orderBy($sortBy, $orderBy);
+                $products = $products->orderBy($sortBy, $orderBy);
             }
 
-            $this->data['selectedSort'] = url('products?sort=' . $sort);
+            $this->data['selectedSort'] = url('products?sort='. $sort);
         }
+        
         return $products;
     }
 }

@@ -2,19 +2,24 @@
 
 namespace App\Http\Controllers\Admin;
 
-use App\Exceptions\OutOfStockException;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
+
 use App\Models\Order;
 use App\Models\OrderItem;
 use App\Models\ProductInventory;
 
-use Illuminate\Support\Facades\DB;
+use \App\Exceptions\OutOfStockException;
+
+use App\Authorizable;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Session;
 
 class OrderController extends Controller
 {
+    use Authorizable;
+
     /**
      * Create a new controller instance.
      *
@@ -28,9 +33,10 @@ class OrderController extends Controller
         $this->data['currentAdminSubMenu'] = 'order';
         $this->data['statuses'] = Order::STATUSES;
     }
-
     /**
      * Display a listing of the resource.
+     *
+     * @param Request $request request params
      *
      * @return \Illuminate\Http\Response
      */
@@ -93,7 +99,8 @@ class OrderController extends Controller
     /**
      * Display the specified resource.
      *
-     * @param  int  $id
+     * @param int $id order ID
+     *
      * @return \Illuminate\Http\Response
      */
     public function show($id)
@@ -195,7 +202,8 @@ class OrderController extends Controller
     /**
      * Remove the specified resource from storage.
      *
-     * @param  int  $id
+     * @param int $id order ID
+     *
      * @return \Illuminate\Http\Response
      */
     public function destroy($id)
@@ -230,6 +238,7 @@ class OrderController extends Controller
                     };
 
                     $order->delete();
+
                     return true;
                 }
             );

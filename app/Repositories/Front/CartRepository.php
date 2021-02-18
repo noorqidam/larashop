@@ -3,7 +3,8 @@
 namespace App\Repositories\Front;
 
 use App\Repositories\Front\Interfaces\CartRepositoryInterface;
-use Darryldecode\Cart\Cart;
+
+use Cart;
 
 class CartRepository implements CartRepositoryInterface
 {
@@ -16,7 +17,7 @@ class CartRepository implements CartRepositoryInterface
     protected $rajaOngkirApiKey = null;
     protected $rajaOngkirBaseUrl = null;
     protected $rajaOngkirOrigin = null;
-
+    
     public function __construct()
     {
         $this->rajaOngkirApiKey = env('RAJAONGKIR_API_KEY');
@@ -28,11 +29,11 @@ class CartRepository implements CartRepositoryInterface
     {
         if ($sessionKey) {
             $this->updateTax($sessionKey);
-            return Cart::session($sessionKey)->getContent($sessionKey);
+            return Cart::session($sessionKey)->getContent();
         }
 
         $this->updateTax();
-        return Cart::getContent($sessionKey);
+        return Cart::getContent();
     }
 
     public function getItemQuantity($productID, $qtyRequested)
@@ -45,11 +46,14 @@ class CartRepository implements CartRepositoryInterface
         if ($sessionKey) {
             return Cart::session($sessionKey)->add($item);
         }
+
+        return Cart::add($item);
     }
 
     public function getCartItem($cartID, $sessionKey = null)
     {
         $items = $this->getContent($sessionKey);
+
         return !(empty($items[$cartID])) ? $items[$cartID] : null;
     }
 
@@ -74,7 +78,19 @@ class CartRepository implements CartRepositoryInterface
         if ($sessionKey) {
             return Cart::session($sessionKey)->remove($cartID);
         }
+
         return Cart::remove($cartID);
+    }
+    
+    public function clear($sessionKey = null)
+    {
+        if ($sessionKey) {
+            Cart::session($sessionKey)->clearCartConditions();
+            return Cart::session($sessionKey)->clear();
+        }
+
+        Cart::clearCartConditions();
+        return Cart::clear();
     }
 
     public function isEmpty($sessionKey = null)
@@ -82,26 +98,21 @@ class CartRepository implements CartRepositoryInterface
         if ($sessionKey) {
             return Cart::session($sessionKey)->isEmpty();
         }
+    
         return Cart::isEmpty();
     }
 
     public function removeConditionsByType($type, $sessionKey = null)
     {
         if ($sessionKey) {
-            Cart::session($sessionKey)->removeConditionsByType($type);
+            return Cart::session($sessionKey)->removeConditionsByType($type);
         }
+
         return Cart::removeConditionsByType($type);
     }
 
-    /**
-     * Update tax to the order
-     *
-     * @return void
-     */
     public function updateTax($sessionKey = null)
     {
-        Cart::removeConditionsByType('tax');
-
         $condition = new \Darryldecode\Cart\CartCondition(
             [
                 'name' => 'TAX 10%',
@@ -125,25 +136,25 @@ class CartRepository implements CartRepositoryInterface
         if ($sessionKey) {
             if (Cart::session($sessionKey)->isEmpty()) {
                 return 0;
-            } else {
-                if (Cart::isEmpty()) {
-                    return 0;
-                }
             }
-
-            $totalWeight = 0;
-            if ($sessionKey) {
-                $items = Cart::session($sessionKey)->getContent();
-            } else {
-                $items = Cart::getContent();
+        } else {
+            if (Cart::isEmpty()) {
+                return 0;
             }
-
-            foreach ($items as $item) {
-                $totalWeight += ($item->quantity * $item->associatedModel->weight);
-            }
-
-            return $totalWeight;
         }
+
+        $totalWeight = 0;
+        if ($sessionKey) {
+            $items = Cart::session($sessionKey)->getContent();
+        } else {
+            $items = Cart::getContent();
+        }
+
+        foreach ($items as $item) {
+            $totalWeight += ($item->quantity * $item->associatedModel->weight);
+        }
+
+        return $totalWeight;
     }
 
     public function getTotalQuantity($sessionKey = null)
@@ -151,6 +162,7 @@ class CartRepository implements CartRepositoryInterface
         if ($sessionKey) {
             return Cart::session($sessionKey)->getTotalQuantity();
         }
+
         return Cart::getTotalQuantity();
     }
 
@@ -159,6 +171,7 @@ class CartRepository implements CartRepositoryInterface
         if ($sessionKey) {
             return Cart::session($sessionKey)->getSubTotal();
         }
+
         return Cart::getSubTotal();
     }
 
@@ -167,6 +180,7 @@ class CartRepository implements CartRepositoryInterface
         if ($sessionKey) {
             return Cart::session($sessionKey)->getTotal();
         }
+
         return Cart::getTotal();
     }
 
@@ -178,26 +192,17 @@ class CartRepository implements CartRepositoryInterface
         foreach ($items as $item) {
             $baseTotalPrice += $item->getPriceSum();
         }
+
         return $baseTotalPrice;
     }
 
-    public function getConditionValue($name, $sessionKey)
+    public function getConditionValue($name, $sessionKey = null)
     {
         if ($sessionKey) {
             return Cart::session($sessionKey)->getCondition($name);
         }
+
         return Cart::getCondition($name);
-    }
-
-    public function clear($sessionKey = null)
-    {
-        if ($sessionKey) {
-            Cart::session($sessionKey)->clearCartConditions();
-            return Cart::session($sessionKey)->clear();
-        }
-
-        Cart::clearCartConditions();
-        return Cart::clear();
     }
 
     /**
@@ -215,13 +220,13 @@ class CartRepository implements CartRepositoryInterface
                 'name' => $serviceName,
                 'type' => 'shipping',
                 'target' => 'total',
-                'value' => '+' . $cost,
+                'value' => '+'. $cost,
             ]
         );
 
         Cart::condition($condition);
     }
-
+    
     public function getShippingCost($destination, $weight)
     {
         $params = [
@@ -233,14 +238,14 @@ class CartRepository implements CartRepositoryInterface
         $results = [];
         foreach ($this->couriers as $code => $courier) {
             $params['courier'] = $code;
-
+            
             $response = $this->rajaOngkirRequest('cost', $params, 'POST');
-
+            
             if (!empty($response['rajaongkir']['results'])) {
                 foreach ($response['rajaongkir']['results'] as $cost) {
                     if (!empty($cost['costs'])) {
                         foreach ($cost['costs'] as $costDetail) {
-                            $serviceName = strtoupper($cost['code']) . ' - ' . $costDetail['service'];
+                            $serviceName = strtoupper($cost['code']) .' - '. $costDetail['service'];
                             $costAmount = $costDetail['cost'][0]['value'];
                             $etd = $costDetail['cost'][0]['etd'];
 
@@ -264,7 +269,7 @@ class CartRepository implements CartRepositoryInterface
             'weight' => $weight,
             'results' => $results,
         ];
-
+        
         return $response;
     }
 
@@ -290,10 +295,10 @@ class CartRepository implements CartRepositoryInterface
         if ($params && $method == 'POST') {
             $requestParams['form_params'] = $params;
         } elseif ($params && $method == 'GET') {
-            $query = is_array($params) ? '?' . http_build_query($params) : '';
+            $query = is_array($params) ? '?'.http_build_query($params) : '';
             $url = $this->rajaOngkirBaseUrl . $resource . $query;
         }
-
+        
         $response = $client->request($method, $url, $requestParams);
 
         return json_decode($response->getBody(), true);
@@ -309,7 +314,7 @@ class CartRepository implements CartRepositoryInterface
      */
     private function getCartItemQuantity($itemId)
     {
-        $items = Cart::getContent();
+        $items = \Cart::getContent();
         $itemQuantity = 0;
         if ($items) {
             foreach ($items as $item) {
@@ -319,6 +324,7 @@ class CartRepository implements CartRepositoryInterface
                 }
             }
         }
+
         return $itemQuantity;
     }
 }

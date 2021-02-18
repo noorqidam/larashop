@@ -184,6 +184,7 @@ return [
         Barryvdh\DomPDF\ServiceProvider::class,
 
         App\Providers\AdminRepositoryServiceProvider::class,
+        App\Providers\FrontRepositoryServiceProvider::class,
     ],
 
     /*

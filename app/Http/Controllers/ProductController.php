@@ -2,9 +2,22 @@
 
 namespace App\Http\Controllers;
 
-use App\Repositories\Front\Interfaces\CatalogueRepositoryInterface;
 use Illuminate\Http\Request;
+use Illuminate\Support\Str;
 
+use App\Repositories\Front\Interfaces\CatalogueRepositoryInterface;
+
+/**
+ * ProductController
+ *
+ * PHP version 7
+ *
+ * @category ProductController
+ * @package  ProductController
+ * @author   Sugiarto <sugiarto.dlingo@gmail.com>
+ * @license  https://opensource.org/licenses/MIT MIT License
+ * @link     http://localhost/
+ */
 class ProductController extends Controller
 {
     private $catalogueRepository;
@@ -41,6 +54,8 @@ class ProductController extends Controller
     /**
      * Display a listing of the resource.
      *
+     * @param Request $request request param
+     *
      * @return \Illuminate\Http\Response
      */
     public function index(Request $request)
@@ -52,7 +67,8 @@ class ProductController extends Controller
     /**
      * Display the specified resource.
      *
-     * @param  int  $id
+     * @param string $slug product slug
+     *
      * @return \Illuminate\Http\Response
      */
     public function show($slug)

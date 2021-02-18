@@ -22,7 +22,7 @@ interface CatalogueRepositoryInterface
 
     public function getMaxPrice();
 
-    public function getProductbyAtrributes($product, $params);
+    public function getProductByAttributes($product, $params);
 
     public function checkProductInventory($product, $qtyRequested);
 }

@@ -6,9 +6,9 @@ use App\Models\Order;
 use App\Models\OrderItem;
 use App\Models\ProductInventory;
 use App\Models\Shipment;
+
 use App\Repositories\Front\Interfaces\OrderRepositoryInterface;
-use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\DB;
+use App\Repositories\Front\Interfaces\CartRepositoryInterface;
 
 class OrderRepository implements OrderRepositoryInterface
 {
@@ -33,17 +33,18 @@ class OrderRepository implements OrderRepositoryInterface
 
     public function saveOrder($params, $sessionKey = null)
     {
-        return DB::transaction(
+        return  \DB::transaction(
             function () use ($params, $sessionKey) {
                 $order = $this->saveOrderData($params, $sessionKey);
                 $this->saveOrderItems($order, $sessionKey);
                 $this->generatePaymentToken($order);
                 $this->saveShipment($order, $params, $sessionKey);
-
+    
                 return $order;
             }
         );
     }
+
 
     // ------- Private Methods ---------
     /**
@@ -57,11 +58,11 @@ class OrderRepository implements OrderRepositoryInterface
     {
         $destination = isset($params['ship_to']) ? $params['shipping_city_id'] : $params['city_id'];
         $selectedShipping = $this->getSelectedShipping($destination, $this->getTotalWeight($sessionKey), $params['shipping_service']);
-
+        
         $baseTotalPrice = $this->cartRepository->getBaseTotalPrice($sessionKey);
 
         $this->cartRepository->getSubTotal($sessionKey);
-        $taxAmount = $this->cartRepository->getConditionValue('Tax 10%', $sessionKey)->parsedRawValue;
+        $taxAmount = $this->cartRepository->getConditionValue('TAX 10%', $sessionKey)->parsedRawValue;
         $taxPercent = (float)$this->cartRepository->getConditionValue('TAX 10%', $sessionKey)->getValue();
 
         $shippingCost = $selectedShipping['cost'];
@@ -73,7 +74,7 @@ class OrderRepository implements OrderRepositoryInterface
         $paymentDue = (new \DateTime($orderDate))->modify('+7 day')->format('Y-m-d H:i:s');
 
         $orderParams = [
-            'user_id' => Auth::user()->id,
+            'user_id' => \Auth::user()->id,
             'code' => Order::generateCode(),
             'status' => Order::CREATED,
             'order_date' => $orderDate,
@@ -103,7 +104,7 @@ class OrderRepository implements OrderRepositoryInterface
 
         return Order::create($orderParams);
     }
-
+    
     /**
      * Get selected shipping from user input
      *
@@ -129,7 +130,7 @@ class OrderRepository implements OrderRepositoryInterface
 
         return $selectedShipping;
     }
-
+    
     /**
      * Get total of order items
      *
@@ -139,7 +140,7 @@ class OrderRepository implements OrderRepositoryInterface
     {
         return $this->cartRepository->getTotalWeight($sessionKey);
     }
-
+    
     /**
      * Save order items
      *
@@ -181,15 +182,13 @@ class OrderRepository implements OrderRepositoryInterface
                 ];
 
                 $orderItem = OrderItem::create($orderItemParams);
-
+                
                 if ($orderItem) {
                     ProductInventory::reduceStock($orderItem->product_id, $orderItem->qty);
                 }
             }
         }
     }
-
-
     /**
      * Generate payment token
      *
@@ -223,14 +222,31 @@ class OrderRepository implements OrderRepositoryInterface
         ];
 
         $snap = \Midtrans\Snap::createTransaction($params);
-
+        
         if ($snap->token) {
             $order->payment_token = $snap->token;
             $order->payment_url = $snap->redirect_url;
             $order->save();
         }
     }
-
+    
+    /**
+     * Initiate payment gateway request object
+     *
+     * @return void
+     */
+    private function initPaymentGateway()
+    {
+        // Set your Merchant Server Key
+        \Midtrans\Config::$serverKey = env('MIDTRANS_SERVER_KEY');
+        // Set to Development/Sandbox Environment (default). Set to true for Production Environment (accept real transaction).
+        \Midtrans\Config::$isProduction = false;
+        // Set sanitization on (default)
+        \Midtrans\Config::$isSanitized = true;
+        // Set 3DS transaction for credit card to true
+        \Midtrans\Config::$is3ds = true;
+    }
+    
     /**
      * Save shipment data
      *
@@ -243,7 +259,7 @@ class OrderRepository implements OrderRepositoryInterface
     {
         $shippingFirstName = isset($params['ship_to']) ? $params['shipping_first_name'] : $params['first_name'];
         $shippingLastName = isset($params['ship_to']) ? $params['shipping_last_name'] : $params['last_name'];
-        $shippingCompany = isset($params['ship_to']) ? $params['shipping_company'] : $params['company'];
+        $shippingCompany = isset($params['ship_to']) ? $params['shipping_company'] :$params['company'];
         $shippingAddress1 = isset($params['ship_to']) ? $params['shipping_address1'] : $params['address1'];
         $shippingAddress2 = isset($params['ship_to']) ? $params['shipping_address2'] : $params['address2'];
         $shippingPhone = isset($params['ship_to']) ? $params['shipping_phone'] : $params['phone'];
@@ -253,7 +269,7 @@ class OrderRepository implements OrderRepositoryInterface
         $shippingPostcode = isset($params['ship_to']) ? $params['shipping_postcode'] : $params['postcode'];
 
         $shipmentParams = [
-            'user_id' => Auth::user()->id,
+            'user_id' => \Auth::user()->id,
             'order_id' => $order->id,
             'status' => Shipment::PENDING,
             'total_qty' => $this->cartRepository->getTotalQuantity($sessionKey),
@@ -270,22 +286,5 @@ class OrderRepository implements OrderRepositoryInterface
         ];
 
         Shipment::create($shipmentParams);
-    }
-
-    /**
-     * Initiate payment gateway request object
-     *
-     * @return void
-     */
-    private function initPaymentGateway()
-    {
-        // Set your Merchant Server Key
-        \Midtrans\Config::$serverKey = env('MIDTRANS_SERVER_KEY');
-        // Set to Development/Sandbox Environment (default). Set to true for Production Environment (accept real transaction).
-        \Midtrans\Config::$isProduction = false;
-        // Set sanitization on (default)
-        \Midtrans\Config::$isSanitized = true;
-        // Set 3DS transaction for credit card to true
-        \Midtrans\Config::$is3ds = true;
     }
 }

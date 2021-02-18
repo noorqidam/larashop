@@ -3,23 +3,24 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
-use App\Http\Requests\ProductImageRequest;
-use App\Http\Requests\ProductRequest;
 
-use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Session;
+use App\Http\Requests\ProductRequest;
+use App\Http\Requests\ProductImageRequest;
 use App\Authorizable;
 
-use App\Repositories\Admin\Interfaces\CategoryRepositoryInterface;
 use App\Repositories\Admin\Interfaces\ProductRepositoryInterface;
+use App\Repositories\Admin\Interfaces\AttributeRepositoryInterface;
+use App\Repositories\Admin\Interfaces\CategoryRepositoryInterface;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Session;
 
 class ProductController extends Controller
 {
     use Authorizable;
 
+    protected $productRepository;
     protected $attributeRepository;
     protected $categoryRepository;
-    protected $productRepository;
 
     /**
      * Create a new controller instance.
@@ -31,13 +32,15 @@ class ProductController extends Controller
      * @return void
      */
     public function __construct(
-        CategoryRepositoryInterface $categoryRepository,
         ProductRepositoryInterface $productRepository,
+        AttributeRepositoryInterface $attributeRepository,
+        CategoryRepositoryInterface $categoryRepository
     ) {
         parent::__construct();
 
-        $this->categoryRepository = $categoryRepository;
         $this->productRepository = $productRepository;
+        $this->attributeRepository = $attributeRepository;
+        $this->categoryRepository = $categoryRepository;
 
         $this->data['currentAdminMenu'] = 'catalog';
         $this->data['currentAdminSubMenu'] = 'product';
@@ -53,6 +56,7 @@ class ProductController extends Controller
     public function index()
     {
         $this->data['products'] = $this->productRepository->paginate(10);
+
         return view('admin.products.index', $this->data);
     }
 
@@ -75,7 +79,8 @@ class ProductController extends Controller
     /**
      * Store a newly created resource in storage.
      *
-     * @param  \Illuminate\Http\Request  $request
+     * @param ProductRequest $request params
+     *
      * @return \Illuminate\Http\Response
      */
     public function store(ProductRequest $request)
@@ -87,14 +92,15 @@ class ProductController extends Controller
             Session::flash('success', 'Product has been saved.');
             return redirect('admin/products/' . $product->id . '/edit/');
         } else {
-            Session::flash('error', 'Product could not be saved');
+            Session::flash('error', 'Product could not be saved.');
         }
     }
 
     /**
      * Show the form for editing the specified resource.
      *
-     * @param  int  $id
+     * @param int $id product ID
+     *
      * @return \Illuminate\Http\Response
      */
     public function edit($id)
@@ -117,8 +123,9 @@ class ProductController extends Controller
     /**
      * Update the specified resource in storage.
      *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  int  $id
+     * @param ProductRequest $request params
+     * @param int            $id      product ID
+     *
      * @return \Illuminate\Http\Response
      */
     public function update(ProductRequest $request, $id)
@@ -126,7 +133,7 @@ class ProductController extends Controller
         $params = $request->except('_token');
 
         if ($this->productRepository->update($params, $id)) {
-            Session::flash('success', 'Product has been saved.');
+            Session::flash('success', 'Product has been saved');
         } else {
             Session::flash('error', 'Product could not be saved');
         }
@@ -137,8 +144,9 @@ class ProductController extends Controller
     /**
      * Remove the specified resource from storage.
      *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
+     * @param int $id product id
+     *
+     * @return void
      */
     public function destroy($id)
     {
@@ -205,9 +213,9 @@ class ProductController extends Controller
             $image = $request->file('image');
 
             if ($this->productRepository->addImage($id, $image)) {
-                Session::flash('success', 'Image has been uploaded');
+                Session::flash('success', 'Image has been uploaded.');
             } else {
-                Session::flash('error', 'Image could not be uploaded');
+                Session::flash('error', 'Image could not be uploaded.');
             }
 
             return redirect('admin/products/' . $id . '/images');
