@@ -47,7 +47,7 @@ class Product extends Model
      */
     public function user()
     {
-        return $this->belongsTo('App\Models\User');
+        return $this->belongsTo(User::class);
     }
 
     /**
@@ -57,7 +57,7 @@ class Product extends Model
      */
     public function productInventory()
     {
-        return $this->hasOne('App\Models\ProductInventory');
+        return $this->hasOne(ProductInventory::class);
     }
 
     /**
@@ -67,7 +67,7 @@ class Product extends Model
      */
     public function categories()
     {
-        return $this->belongsToMany('App\Models\Category', 'product_categories');
+        return $this->belongsToMany(Category::class, 'product_categories');
     }
 
     /**
@@ -77,7 +77,7 @@ class Product extends Model
      */
     public function variants()
     {
-        return $this->hasMany('App\Models\Product', 'parent_id')->orderBy('price', 'ASC');
+        return $this->hasMany(Product::class, 'parent_id')->orderBy('price', 'ASC');
     }
 
     /**
@@ -87,7 +87,7 @@ class Product extends Model
      */
     public function parent()
     {
-        return $this->belongsTo('App\Models\Product', 'parent_id');
+        return $this->belongsTo(Product::class, 'parent_id');
     }
 
     /**
@@ -97,7 +97,7 @@ class Product extends Model
      */
     public function productAttributeValues()
     {
-        return $this->hasMany('App\Models\ProductAttributeValue', 'parent_product_id');
+        return $this->hasMany(ProductAttributeValue::class, 'parent_product_id');
     }
 
     /**
@@ -107,7 +107,7 @@ class Product extends Model
      */
     public function productImages()
     {
-        return $this->hasMany('App\Models\ProductImage')->orderBy('id', 'DESC');
+        return $this->hasMany(ProductImage::class)->orderBy('id', 'DESC');
     }
 
     /**
@@ -117,7 +117,7 @@ class Product extends Model
      */
     public function orderItems()
     {
-        return $this->hasMany('App\Models\OrderItem');
+        return $this->hasMany(OrderItem::class);
     }
 
     /**

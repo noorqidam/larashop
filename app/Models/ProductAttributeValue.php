@@ -20,12 +20,12 @@ class ProductAttributeValue extends Model
 
     public function product()
     {
-        return $this->belongsTo('App\Models\Product');
+        return $this->belongsTo(Product::class);
     }
 
     public function attribute()
     {
-        return $this->belongsTo('App\Models\Attribute');
+        return $this->belongsTo(Attribute::class);
     }
 
     public static function getAttributeOptions($product, $attributeCode)

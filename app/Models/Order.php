@@ -73,7 +73,7 @@ class Order extends Model
      */
     public function shipment()
     {
-        return $this->hasOne('App\Models\Shipment');
+        return $this->hasOne(Shipment::class);
     }
 
     /**
@@ -83,7 +83,7 @@ class Order extends Model
      */
     public function orderItems()
     {
-        return $this->hasMany('App\Models\OrderItem');
+        return $this->hasMany(OrderItem::class);
     }
 
     /**
@@ -93,7 +93,7 @@ class Order extends Model
      */
     public function user()
     {
-        return $this->belongsTo('App\Models\User');
+        return $this->belongsTo(User::class);
     }
 
     /**
