@@ -3,21 +3,9 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-use Illuminate\Support\Str;
 
 use App\Repositories\Front\Interfaces\CatalogueRepositoryInterface;
 
-/**
- * ProductController
- *
- * PHP version 7
- *
- * @category ProductController
- * @package  ProductController
- * @author   Sugiarto <sugiarto.dlingo@gmail.com>
- * @license  https://opensource.org/licenses/MIT MIT License
- * @link     http://localhost/
- */
 class ProductController extends Controller
 {
     private $catalogueRepository;

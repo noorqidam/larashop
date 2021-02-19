@@ -2,7 +2,6 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Product;
 use App\Repositories\Front\Interfaces\CartRepositoryInterface;
 use App\Repositories\Front\Interfaces\CatalogueRepositoryInterface;
 use Illuminate\Http\Request;
@@ -34,7 +33,7 @@ class CartController extends Controller
     {
         $this->data['items'] = $this->cartRepository->getContent();
 
-        return $this->loadTheme('cart.index', $this->data);
+        return $this->loadTheme('carts.index', $this->data);
     }
 
     /**
@@ -52,7 +51,7 @@ class CartController extends Controller
 
         $attributes = [];
         if ($product->configurable()) {
-            $product = $this->catalogueRepository->getProductbyAtrributes($product, $params);
+            $product = $this->catalogueRepository->getProductByAttributes($product, $params);
 
             $attributes['size'] = $params['size'];
             $attributes['color'] = $params['color'];

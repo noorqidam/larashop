@@ -17,7 +17,7 @@ class CartRepository implements CartRepositoryInterface
     protected $rajaOngkirApiKey = null;
     protected $rajaOngkirBaseUrl = null;
     protected $rajaOngkirOrigin = null;
-    
+
     public function __construct()
     {
         $this->rajaOngkirApiKey = env('RAJAONGKIR_API_KEY');
@@ -81,7 +81,7 @@ class CartRepository implements CartRepositoryInterface
 
         return Cart::remove($cartID);
     }
-    
+
     public function clear($sessionKey = null)
     {
         if ($sessionKey) {
@@ -98,7 +98,7 @@ class CartRepository implements CartRepositoryInterface
         if ($sessionKey) {
             return Cart::session($sessionKey)->isEmpty();
         }
-    
+
         return Cart::isEmpty();
     }
 
@@ -220,13 +220,13 @@ class CartRepository implements CartRepositoryInterface
                 'name' => $serviceName,
                 'type' => 'shipping',
                 'target' => 'total',
-                'value' => '+'. $cost,
+                'value' => '+' . $cost,
             ]
         );
 
         Cart::condition($condition);
     }
-    
+
     public function getShippingCost($destination, $weight)
     {
         $params = [
@@ -238,14 +238,14 @@ class CartRepository implements CartRepositoryInterface
         $results = [];
         foreach ($this->couriers as $code => $courier) {
             $params['courier'] = $code;
-            
+
             $response = $this->rajaOngkirRequest('cost', $params, 'POST');
-            
+
             if (!empty($response['rajaongkir']['results'])) {
                 foreach ($response['rajaongkir']['results'] as $cost) {
                     if (!empty($cost['costs'])) {
                         foreach ($cost['costs'] as $costDetail) {
-                            $serviceName = strtoupper($cost['code']) .' - '. $costDetail['service'];
+                            $serviceName = strtoupper($cost['code']) . ' - ' . $costDetail['service'];
                             $costAmount = $costDetail['cost'][0]['value'];
                             $etd = $costDetail['cost'][0]['etd'];
 
@@ -269,7 +269,7 @@ class CartRepository implements CartRepositoryInterface
             'weight' => $weight,
             'results' => $results,
         ];
-        
+
         return $response;
     }
 
@@ -295,10 +295,10 @@ class CartRepository implements CartRepositoryInterface
         if ($params && $method == 'POST') {
             $requestParams['form_params'] = $params;
         } elseif ($params && $method == 'GET') {
-            $query = is_array($params) ? '?'.http_build_query($params) : '';
+            $query = is_array($params) ? '?' . http_build_query($params) : '';
             $url = $this->rajaOngkirBaseUrl . $resource . $query;
         }
-        
+
         $response = $client->request($method, $url, $requestParams);
 
         return json_decode($response->getBody(), true);

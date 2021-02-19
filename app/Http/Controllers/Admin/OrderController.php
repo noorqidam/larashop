@@ -75,7 +75,7 @@ class OrderController extends Controller
                 return redirect('admin/orders');
             }
 
-            $order = $orders->whereRaw("DATE(order_date) >= ?", $startDate)
+            $orders->whereRaw("DATE(order_date) >= ?", $startDate)
                 ->whereRaw("DATE(order_date) <= ? ", $endDate);
         }
 

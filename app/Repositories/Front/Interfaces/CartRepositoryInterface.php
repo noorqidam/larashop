@@ -1,4 +1,5 @@
 <?php
+
 namespace App\Repositories\Front\Interfaces;
 
 interface CartRepositoryInterface
