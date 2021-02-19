@@ -1,10 +1,10 @@
-## About Nomads
+## About Larashop
 
 Larashop is an online store application (marketplace) that can be used to sell various kinds of goods and users can also buy goods that are integrated with a payment gateway.
 
 ## Features
 
-# Admin Cms Nomads ( master account)
+# Admin Cms Larashop ( master account)
 
 | Featured                                       | Create | Read | Update | Delete |
 | ---------------------------------------------- | ------ | ---- | ------ | ------ |
