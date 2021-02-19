@@ -4,7 +4,6 @@
 	<div class="breadcrumb-area pt-50">
 		<div class="container">
 			<div class="breadcrumb-content">
-				<h2 class="text-center">product details</h2>
 				<ul>
 					<li><a href="/">home</a></li>
 					<li> product details </li>

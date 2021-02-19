@@ -10,7 +10,7 @@
             </a>
             <span>hot</span>
             <div class="product-action-list-style">
-                <a class="animate-right" title="Quick View" data-toggle="modal" data-target="#exampleModal" href="#">
+                <a class="animate-right quick-view" title="Quick View" product-slug="{{ $product->slug }}" href="">
                     <i class="pe-7s-look"></i>
                 </a>
             </div>
