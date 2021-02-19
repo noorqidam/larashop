@@ -36,9 +36,9 @@ Larashop is an online store application (marketplace) that can be used to sell v
 -   Laravel Cart
 -   Laravel Excel
 -   Laravel PDF
--   Laravel Spatie
+-   Laravel Spatie Permission
 -   Blade Templating
--   Midtrans
+-   Midtrans PHP
 
 ## Prerequisite
 
