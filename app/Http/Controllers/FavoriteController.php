@@ -2,9 +2,10 @@
 
 namespace App\Http\Controllers;
 
+use Illuminate\Http\Request;
+
 use App\Models\Favorite;
 use App\Models\Product;
-use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Session;
 
@@ -21,7 +22,6 @@ class FavoriteController extends Controller
 
         $this->middleware('auth');
     }
-
     /**
      * Display a listing of the resource.
      *
@@ -37,10 +37,12 @@ class FavoriteController extends Controller
         return $this->loadTheme('favorites.index', $this->data);
     }
 
+
     /**
      * Store a newly created resource in storage.
      *
-     * @param  \Illuminate\Http\Request  $request
+     * @param \Illuminate\Http\Request $request request params
+     *
      * @return \Illuminate\Http\Response
      */
     public function store(Request $request)
@@ -73,7 +75,8 @@ class FavoriteController extends Controller
     /**
      * Remove the specified resource from storage.
      *
-     * @param  int  $id
+     * @param int $id favorite id
+     *
      * @return \Illuminate\Http\Response
      */
     public function destroy($id)

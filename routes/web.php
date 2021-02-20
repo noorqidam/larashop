@@ -4,6 +4,7 @@ use App\Http\Controllers\Admin\AttributeController;
 use App\Http\Controllers\Admin\CategoryController;
 use App\Http\Controllers\Admin\DashboardController;
 use App\Http\Controllers\Admin\OrderController;
+use App\Http\Controllers\OrderController as OrderFrontEndController;
 use App\Http\Controllers\Admin\ProductController;
 use App\Http\Controllers\ProductController as ProductFrontEndController;
 use App\Http\Controllers\Admin\ReportController;
@@ -14,7 +15,6 @@ use App\Http\Controllers\Admin\UserController;
 use App\Http\Controllers\CartController;
 use App\Http\Controllers\FavoriteController;
 use App\Http\Controllers\HomeController;
-use App\Http\Controllers\OrderController as OrderFrontEndController;
 use App\Http\Controllers\PaymentController;
 use App\Http\Controllers\ProfileController;
 use Illuminate\Support\Facades\Route;
@@ -57,7 +57,7 @@ Route::get('payments/completed', [PaymentController::class, 'completed']);
 Route::get('payments/failed', [PaymentController::class, 'failed']);
 Route::get('payments/unfinish', [PaymentController::class, 'unfinish']);
 
-Route::resource('favorite', FavoriteController::class);
+Route::resource('favorites', FavoriteController::class);
 
 Route::get('profile', [ProfileController::class, 'index']);
 Route::post('profile', [ProfileController::class, 'update']);

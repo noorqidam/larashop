@@ -67,7 +67,7 @@ class OrderController extends Controller
         }
 
         $this->cartRepository->removeConditionsByType('shipping');
-        $this->cartRepositories->updateTax();
+        $this->cartRepository->updateTax();
 
         $items = $this->cartRepository->getContent();
         $this->data['items'] = $items;
@@ -104,7 +104,7 @@ class OrderController extends Controller
     {
         $destination = $request->input('city_id');
 
-        return $this->getShippingCost($destination, $this->_getTotalWeight());
+        return $this->getShippingCost($destination, $this->getTotalWeight());
     }
 
     /**
@@ -170,7 +170,7 @@ class OrderController extends Controller
      */
     private function getShippingCost($destination, $weight)
     {
-        $this->cartRepository->getShippingCost($destination, $weight);
+        return $this->cartRepository->getShippingCost($destination, $weight);
     }
 
     /**

@@ -48,7 +48,7 @@ class User extends Authenticatable
      */
     public function products()
     {
-        return $this->hasMany('App\Models\Product');
+        return $this->hasMany(Product::class);
     }
 
     /**
@@ -58,6 +58,6 @@ class User extends Authenticatable
      */
     public function favorites()
     {
-        return $this->hasMany('App\Models\Favorite');
+        return $this->hasMany(Favorite::class);
     }
 }
