@@ -75,7 +75,7 @@ Route::prefix('admin')
             ->name('products.add_image');
         Route::post('products/images/{productID}', [ProductController::class, 'uploadImage'])
             ->name('products.upload_image');
-        Route::delete('products/images/{imageID}', [ProductController::class, 'remove_image'])
+        Route::delete('products/images/{imageID}', [ProductController::class, 'removeImage'])
             ->name('products.remove_image');
 
         Route::resource('attributes', AttributeController::class);

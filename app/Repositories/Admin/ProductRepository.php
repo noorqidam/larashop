@@ -208,8 +208,8 @@ class ProductRepository implements ProductRepositoryInterface
      */
     public function removeImage($id)
     {
-        $image = ProductImage::findOrFail($id);
-        // $image = $this->findImageById($id);
+        // $image = ProductImage::findOrFail($id);
+        $image = $this->findImageById($id);
         return $image->delete();
     }
 
