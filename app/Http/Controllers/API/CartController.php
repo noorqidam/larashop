@@ -55,32 +55,32 @@ class CartController extends BaseController
 
         $attributes = [];
         if ($product->configurable()) {
-            $product = $this->catalogueRepository->getProductbyAtrributes($product, $params);
+            $product = $this->catalogueRepository->getProductByAttributes($product, $params);
 
             $attributes['size'] = $params['size'];
             $attributes['color'] = $params['color'];
-
-            $itemQuantity = $this->cartRepository->getItemQuantity($product->id, $params['qty']);
-
-            try {
-                $this->catalogueRepository->checkProductInventory($product, $itemQuantity);
-                $item = [
-                    'id' => md5($product->id),
-                    'name' => $product->name,
-                    'price' => $product->price,
-                    'quantity' => $params['qty'],
-                    'attributes' => $attributes,
-                    'associatedModel' => $product,
-                ];
-
-                if ($this->cartRepository->addItem($item, $this->getSessionKey($request))) {
-                    return $this->responseOk(true, 200, 'success');
-                }
-            } catch (OutOfStockException $e) {
-                return $this->responseError($e->getMessage(), 400);
-            }
-            return $this->responseError('Add item failed', 422);
         }
+
+        $itemQuantity = $this->cartRepository->getItemQuantity($product->id, $params['qty']);
+
+        try {
+            $this->catalogueRepository->checkProductInventory($product, $itemQuantity);
+            $item = [
+                'id' => md5($product->id),
+                'name' => $product->name,
+                'price' => $product->price,
+                'quantity' => $params['qty'],
+                'attributes' => $attributes,
+                'associatedModel' => $product,
+            ];
+
+            if ($this->cartRepository->addItem($item, $this->getSessionKey($request))) {
+                return $this->responseOk(true, 200, 'success');
+            }
+        } catch (OutOfStockException $e) {
+            return $this->responseError($e->getMessage(), 400);
+        }
+        return $this->responseError('Add item failed', 422);
     }
 
     public function update(Request $request, $id)
@@ -195,7 +195,7 @@ class CartController extends BaseController
             $status = 200;
             $message = 'Success set shipping cost';
 
-            $this->cartRepositories->addShippingCostToCart('shipping_cost', $selectedShipping['cost']);
+            $this->cartRepository->addShippingCostToCart('shipping_cost', $selectedShipping['cost']);
 
             $data['total'] = number_format($this->cartRepository->getTotal());
             return $this->responseOk($data, 200, 'success');
